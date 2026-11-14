@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Углеродный след в ИТ · Green Digital</title>
+<style>
+:root{
+  --bg:#070b0a;
+  --bg-soft:#0d1412;
+  --card:#111a17;
+  --card-hi:#16211d;
+  --border:rgba(61,220,132,.15);
+  --green:#3ddc84;
+  --green-2:#2ee6a8;
+  --mint:#8ef7c8;
+  --text:#e6f1ec;
+  --muted:#8ba49a;
+  --radius:18px;
+  --shadow:0 18px 50px -18px rgba(0,0,0,.85);
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  font-family:'Segoe UI',system-ui,-apple-system,'Inter',Roboto,sans-serif;
+  background:var(--bg);
+  color:var(--text);
+  line-height:1.65;
+  overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;
+}
+body::before{
+  content:"";
+  position:fixed;inset:0;
+  background-image:
+    linear-gradient(rgba(61,220,132,.045) 1px,transparent 1px),
+    linear-gradient(90deg,rgba(61,220,132,.045) 1px,transparent 1px);
+  background-size:64px 64px;
+  pointer-events:none;
+  z-index:0;
+  mask-image:radial-gradient(ellipse at 50% 0%,#000 0%,transparent 75%);
+}
+.orb{
+  position:fixed;border-radius:50%;filter:blur(90px);opacity:.35;pointer-events:none;z-index:0;
+}
+.orb.a{width:520px;height:520px;background:#1f8f5c;top:-180px;left:-140px;animation:float1 18s ease-in-out infinite}
+.orb.b{width:440px;height:440px;background:#0e6b7a;top:45%;right:-160px;animation:float2 22s ease-in-out infinite}
+.orb.c{width:380px;height:380px;background:#2a7a3f;bottom:-120px;left:35%;animation:float1 26s ease-in-out infinite reverse}
+@keyframes float1{0%,100%{transform:translate(0,0)}50%{transform:translate(60px,50px)}}
+@keyframes float2{0%,100%{transform:translate(0,0)}50%{transform:translate(-70px,-40px)}}
+
+/* ---------- NAV ---------- */
+nav{
+  position:fixed;top:0;left:0;right:0;z-index:100;
+  backdrop-filter:blur(16px);
+  background:rgba(7,11,10,.72);
+  border-bottom:1px solid transparent;
+  transition:.35s;
+}
+nav.scrolled{border-bottom-color:var(--border);background:rgba(7,11,10,.92)}
+.nav-inner{
+  max-width:1180px;margin:0 auto;padding:14px 24px;
+  display:flex;align-items:center;justify-content:space-between;gap:20px;
+}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;letter-spacing:-.3px;font-size:1.05rem}
+.logo-mark{
+  width:30px;height:30px;border-radius:9px;
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+  display:grid;place-items:center;font-size:1rem;color:#05130c;
+  box-shadow:0 0 22px rgba(61,220,132,.45);
+}
+.nav-links{display:flex;gap:6px;flex-wrap:wrap}
+.nav-links a{
+  color:var(--muted);text-decoration:none;font-size:.86rem;font-weight:500;
+  padding:7px 13px;border-radius:9px;transition:.25s;
+}
+.nav-links a:hover{color:var(--green);background:rgba(61,220,132,.09)}
+@media(max-width:900px){.nav-links{display:none}}
+
+/* ---------- HERO ---------- */
+.hero{
+  position:relative;z-index:1;
+  max-width:1180px;margin:0 auto;
+  padding:170px 24px 100px;
+  text-align:center;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:9px;
+  padding:7px 16px;border-radius:100px;
+  border:1px solid var(--border);
+  background:rgba(61,220,132,.07);
+  font-size:.78rem;font-weight:600;letter-spacing:.6px;
+  text-transform:uppercase;color:var(--mint);
+  margin-bottom:28px;
+}
+.badge .dot{
+  width:7px;height:7px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 12px var(--green);animation:pulse 2s infinite;
+}
+@keyframes pulse{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.4;transform:scale(.8)}}
+h1{
+  font-size:clamp(2.2rem,6vw,4.2rem);
+  line-height:1.06;letter-spacing:-2px;font-weight:800;
+  margin-bottom:26px;
+}
+h1 .grad{
+  background:linear-gradient(100deg,var(--green) 10%,var(--mint) 45%,#5fd8ff 90%);
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p.lead{
+  max-width:700px;margin:0 auto 42px;
+  font-size:clamp(1rem,2vw,1.18rem);color:var(--muted);
+}
+.hero-actions{display:flex;gap:14px;justify-content:center;flex-wrap:wrap}
+.btn{
+  padding:13px 28px;border-radius:12px;font-weight:650;font-size:.95rem;
+  text-decoration:none;display:inline-flex;align-items:center;gap:9px;
+  transition:.3s;border:1px solid transparent;cursor:pointer;font-family:inherit;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+  color:#04140c;box-shadow:0 10px 34px -10px rgba(61,220,132,.7);
+}
+.btn-primary:hover{transform:translateY(-3px);box-shadow:0 16px 42px -10px rgba(61,220,132,.85)}
+.btn-ghost{border-color:var(--border);color:var(--text);background:rgba(255,255,255,.02)}
+.btn-ghost:hover{border-color:var(--green);color:var(--green);transform:translateY(-3px)}
+
+/* ---------- SECTIONS ---------- */
+section{position:relative;z-index:1;max-width:1180px;margin:0 auto;padding:90px 24px}
+.sec-tag{
+  font-size:.75rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;
+  color:var(--green);margin-bottom:14px;
+}
+h2{
+  font-size:clamp(1.8rem,4vw,2.7rem);letter-spacing:-1.2px;
+  line-height:1.15;margin-bottom:18px;font-weight:750;
+}
+.sec-desc{color:var(--muted);max-width:720px;font-size:1.02rem;margin-bottom:52px}
+
+.reveal{opacity:0;transform:translateY(34px);transition:opacity .8s cubic-bezier(.2,.8,.2,1),transform .8s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- CARDS ---------- */
+.grid{display:grid;gap:20px}
+.grid-3{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.grid-2{grid-template-columns:repeat(auto-fit,minmax(320px,1fr))}
+.card{
+  background:linear-gradient(165deg,var(--card),var(--bg-soft));
+  border:1px solid var(--border);
+  border-radius:var(--radius);
+  padding:30px 26px;
+  position:relative;overflow:hidden;
+  transition:.35s;
+}
+.card::after{
+  content:"";position:absolute;inset:0;border-radius:inherit;
+  background:radial-gradient(400px circle at var(--mx,50%) var(--my,0%),rgba(61,220,132,.12),transparent 60%);
+  opacity:0;transition:opacity .4s;pointer-events:none;
+}
+.card:hover{transform:translateY(-6px);border-color:rgba(61,220,132,.4);box-shadow:var(--shadow)}
+.card:hover::after{opacity:1}
+.card-icon{
+  width:52px;height:52px;border-radius:14px;display:grid;place-items:center;
+  font-size:1.5rem;margin-bottom:20px;
+  background:rgba(61,220,132,.1);border:1px solid rgba(61,220,132,.25);
+}
+.card h3{font-size:1.15rem;margin-bottom:10px;font-weight:650;letter-spacing:-.3px}
+.card p{color:var(--muted);font-size:.94rem}
+.card .share{
+  margin-top:18px;font-size:.8rem;font-weight:700;letter-spacing:.5px;
+  color:var(--green);text-transform:uppercase;
+}
+
+/* ---------- STATS ---------- */
+.stats-band{
+  background:linear-gradient(135deg,rgba(61,220,132,.09),rgba(46,230,168,.03));
+  border:1px solid var(--border);
+  border-radius:26px;padding:52px 30px;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));
+  gap:34px;text-align:center;
+}
+.stat-num{
+  font-size:clamp(2rem,4.5vw,3rem);font-weight:800;letter-spacing:-2px;
+  background:linear-gradient(120deg,var(--green),var(--mint));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+  line-height:1;margin-bottom:10px;
+}
+.stat-label{color:var(--muted);font-size:.87rem;line-height:1.5}
+.stat-src{display:block;margin-top:8px;font-size:.72rem;color:#5c7469;font-style:italic}
+
+/* ---------- SCOPE ---------- */
+.scope-list{display:grid;gap:16px}
+.scope-item{
+  display:flex;gap:20px;align-items:flex-start;
+  padding:26px;border-radius:var(--radius);
+  background:var(--card);border:1px solid var(--border);
+  transition:.3s;
+}
+.scope-item:hover{border-color:rgba(61,220,132,.4);transform:translateX(6px)}
+.scope-num{
+  flex:0 0 46px;height:46px;border-radius:12px;display:grid;place-items:center;
+  font-weight:800;font-size:1.05rem;color:#05130c;
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+}
+.scope-item h4{margin-bottom:6px;font-size:1.05rem}
+.scope-item p{color:var(--muted);font-size:.93rem}
+
+/* ---------- CALCULATOR ---------- */
+.calc-wrap{
+  display:grid;grid-template-columns:1.15fr .85fr;gap:26px;
+  align-items:start;
+}
+@media(max-width:880px){.calc-wrap{grid-template-columns:1fr}}
+.calc-panel{
+  background:linear-gradient(165deg,var(--card),var(--bg-soft));
+  border:1px solid var(--border);border-radius:22px;padding:34px 30px;
+}
+.field{margin-bottom:26px}
+.field-head{display:flex;justify-content:space-between;align-items:baseline;margin-bottom:11px;gap:12px}
+.field-head label{font-size:.92rem;font-weight:600}
+.field-head .val{
+  font-size:.9rem;font-weight:700;color:var(--green);
+  background:rgba(61,220,132,.1);padding:3px 11px;border-radius:8px;
+  white-space:nowrap;
+}
+input[type=range]{
+  -webkit-appearance:none;appearance:none;width:100%;height:6px;border-radius:100px;
+  background:rgba(255,255,255,.09);outline:none;cursor:pointer;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:20px;height:20px;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),var(--green-2));
+  cursor:pointer;box-shadow:0 0 0 4px rgba(61,220,132,.16),0 0 16px rgba(61,220,132,.6);
+  transition:.2s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.15)}
+input[type=range]::-moz-range-thumb{
+  width:20px;height:20px;border:none;border-radius:50%;
+  background:linear-gradient(135deg,var(--green),var(--green-2));cursor:pointer;
+  box-shadow:0 0 0 4px rgba(61,220,132,.16);
+}
+.result-panel{
+  background:linear-gradient(160deg,rgba(61,220,132,.13),rgba(20,32,27,.9));
+  border:1px solid rgba(61,220,132,.32);
+  border-radius:22px;padding:34px 30px;
+  position:sticky;top:96px;
+}
+.result-label{font-size:.78rem;letter-spacing:1.6px;text-transform:uppercase;color:var(--mint);font-weight:700;margin-bottom:16px}
+.result-main{font-size:clamp(2.4rem,6vw,3.4rem);font-weight:800;letter-spacing:-2px;line-height:1;color:#fff}
+.result-main small{font-size:1rem;font-weight:600;color:var(--muted);letter-spacing:0}
+.result-sub{color:var(--muted);font-size:.85rem;margin-top:8px;margin-bottom:26px}
+.equiv{display:grid;gap:12px;border-top:1px solid rgba(61,220,132,.2);padding-top:22px}
+.equiv-row{display:flex;justify-content:space-between;gap:14px;font-size:.88rem}
+.equiv-row span:first-child{color:var(--muted)}
+.equiv-row span:last-child{font-weight:700;color:var(--mint);text-align:right}
+.calc-note{font-size:.76rem;color:#5c7469;margin-top:22px;line-height:1.6}
+
+/* ---------- PRACTICES ---------- */
+.practice-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:18px}
+.practice{
+  background:var(--card);border:1px solid var(--border);border-radius:16px;
+  padding:24px;transition:.3s;position:relative;
+}
+.practice:hover{border-color:rgba(61,220,132,.45);transform:translateY(-4px);background:var(--card-hi)}
+.practice .ico{font-size:1.4rem;margin-bottom:12px;display:block}
+.practice h4{font-size:.98rem;margin-bottom:8px;font-weight:650}
+.practice p{font-size:.87rem;color:var(--muted)}
+
+/* ---------- ACCORDION ---------- */
+details{
+  background:var(--card);border:1px solid var(--border);border-radius:14px;
+  padding:0;margin-bottom:12px;overflow:hidden;transition:.3s;
+}
+details[open]{border-color:rgba(61,220,132,.4);background:var(--card-hi)}
+summary{
+  padding:20px 24px;cursor:pointer;font-weight:600;font-size:.97rem;
+  list-style:none;display:flex;justify-content:space-between;align-items:center;gap:16px;
+}
+summary::-webkit-details-marker{display:none}
+summary::after{
+  content:"+";font-size:1.4rem;color:var(--green);font-weight:300;
+  transition:transform .3s;line-height:1;
+}
+details[open] summary::after{transform:rotate(45deg)}
+details .body{padding:0 24px 22px;color:var(--muted);font-size:.92rem}
+
+/* ---------- TABLE ---------- */
+.table-wrap{overflow-x:auto;border:1px solid var(--border);border-radius:16px}
+table{width:100%;border-collapse:collapse;font-size:.9rem;min-width:560px}
+th{
+  text-align:left;padding:16px 20px;background:rgba(61,220,132,.08);
+  font-size:.76rem;letter-spacing:1.2px;text-transform:uppercase;color:var(--mint);
+  font-weight:700;border-bottom:1px solid var(--border);
+}
+td{padding:15px 20px;border-bottom:1px solid rgba(61,220,132,.07);color:var(--muted)}
+tr:last-child td{border-bottom:none}
+tr:hover td{background:rgba(61,220,132,.04);color:var(--text)}
+td strong{color:var(--text);font-weight:650}
+
+/* ---------- CTA ---------- */
+.cta{
+  text-align:center;padding:70px 34px;border-radius:28px;
+  background:
+    radial-gradient(circle at 30% 20%,rgba(61,220,132,.2),transparent 60%),
+    radial-gradient(circle at 75% 80%,rgba(46,230,168,.14),transparent 60%),
+    var(--card);
+  border:1px solid rgba(61,220,132,.3);
+}
+.cta h2{margin-bottom:16px}
+.cta p{color:var(--muted);max-width:600px;margin:0 auto 34px}
+
+/* ---------- FOOTER ---------- */
+footer{
+  position:relative;z-index:1;border-top:1px solid var(--border);
+  margin-top:60px;padding:44px 24px;
+  text-align:center;color:#5c7469;font-size:.84rem;
+}
+footer .foot-logo{color:var(--text);font-weight:700;margin-bottom:10px;font-size:.95rem}
+footer a{color:var(--green);text-decoration:none}
+footer a:hover{text-decoration:underline}
+</style>
+</head>
+<body>
+
+<div class="orb a"></div>
+<div class="orb b"></div>
+<div class="orb c"></div>
+
+<!-- ================= NAV ================= -->
+<nav id="nav">
+  <div class="nav-inner">
+    <div class="logo">
+      <div class="logo-mark">◈</div>
+      Green&nbsp;Digital
+    </div>
+    <div class="nav-links">
+      <a href="#what">Что это</a>
+      <a href="#sources">Источники</a>
+      <a href="#numbers">Цифры</a>
+      <a href="#calc">Калькулятор</a>
+      <a href="#practices">Практики</a>
+      <a href="#metrics">Метрики</a>
+      <a href="#myths">Мифы</a>
+    </div>
+  </div>
+</nav>
+
+<!-- ================= HERO ================= -->
+<header class="hero">
+  <div class="badge"><span class="dot"></span>Green IT · Sustainability</div>
+  <h1>Углеродный след<br><span class="grad">информационных систем</span></h1>
+  <p class="lead">
+    Каждый запрос, каждое облако и каждая строка кода имеют свою цену в CO₂.
+    Разбираемся, откуда берутся выбросы цифровой инфраструктуры — и что с этим делать.
+  </p>
+  <div class="hero-actions">
+    <a href="#calc" class="btn btn-primary">Рассчитать свой след →</a>
+    <a href="#what" class="btn btn-ghost">Начать с основ</a>
+  </div>
+</header>
+
+<!-- ================= WHAT ================= -->
+<section id="what">
+  <div class="reveal">
+    <div class="sec-tag">Определение</div>
+    <h2>Что такое углеродный след ИТ-системы</h2>
+    <p class="sec-desc">
+      Это суммарный объём парниковых газов (в CO₂-эквиваленте), который возникает
+      на протяжении всего жизненного цикла цифрового продукта: от добычи руды
+      для серверов до удаления данных из облака.
+    </p>
+  </div>
+
+  <div class="grid grid-3 reveal">
+    <div class="card">
+      <div class="card-icon">⚡</div>
+      <h3>Энергия в работе</h3>
+      <p>Серверы, сети и устройства потребляют электричество непрерывно. Если оно из ископаемого топлива — каждый киловатт-час превращается в выбросы.</p>
+      <div class="share">≈ 50–70% следа ЦОД</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🏭</div>
+      <h3>Производство железа</h3>
+      <p>Изготовление сервера, ноутбука или смартфона требует огромных затрат энергии и редких металлов — это «встроенный» углерод.</p>
+      <div class="share">до 80% следа смартфона</div>
+    </div>
+    <div class="card">
+      <div class="card-icon">🌡️</div>
+      <h3>Охлаждение и инфраструктура</h3>
+      <p>Системы охлаждения, ИБП, дизель-генераторы и здания ЦОД добавляют существенную долю к общему энергопотреблению.</p>
+      <div class="share">до 40% энергии ЦОД</div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= SOURCES ================= -->
+<section id="sources">
+  <div class="reveal">
+    <div class="sec-tag">Анатомия выбросов</div>
+    <h2>Где именно возникает след</h2>
+    <p class="sec-desc">
+      По методологии GHG Protocol выбросы делят на три «охвата» (Scope).
+      Для ИТ-отрасли критично, что большая часть следа находится за пределами
+      прямого контроля компании.
+    </p>
+  </div>
+
+  <div class="scope-list reveal">
+    <div class="scope-item">
+      <div class="scope-num">1</div>
+      <div>
+        <h4>Scope 1 — Прямые выбросы</h4>
+        <p>Топливо собственных генераторов, утечки хладагентов в системах охлаждения, служебный транспорт. Обычно небольшая, но «грязная» часть.</p>
+      </div>
+    </div>
+    <div class="scope-item">
+      <div class="scope-num">2</div>
+      <div>
+        <h4>Scope 2 — Покупная энергия</h4>
+        <p>Электричество для серверов, сетей и охлаждения. Ключевой рычаг: переход на возобновляемые источники (ВИЭ) или PPA-контракты может обнулить эту категорию.</p>
+      </div>
+    </div>
+    <div class="scope-item">
+      <div class="scope-num">3</div>
+      <div>
+        <h4>Scope 3 — Цепочка поставок</h4>
+        <p>Производство оборудования, его транспортировка, утилизация, а также использование продукта клиентами. Для ИТ-компаний это часто <strong>70–90% всего следа</strong>.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= NUMBERS ================= -->
+<section id="numbers">
+  <div class="reveal">
+    <div class="sec-tag">Масштаб проблемы</div>
+    <h2>Цифры, которые стоит знать</h2>
+    <p class="sec-desc">Оценки разных источников — порядок величин, а не точные значения.</p>
+  </div>
+
+  <div class="stats-band reveal">
+    <div>
+      <div class="stat-num" data-target="4" data-suffix="%">0%</div>
+      <div class="stat-label">мировых выбросов CO₂ приходится на ИКТ-сектор<span class="stat-src">сопоставимо с авиацией</span></div>
+    </div>
+    <div>
+      <div class="stat-num" data-target="460" data-suffix=" ТВт·ч">0</div>
+      <div class="stat-label">энергопотребление дата-центров в 2022 году<span class="stat-src">IEA, 2024</span></div>
+    </div>
+    <div>
+      <div class="stat-num" data-target="80" data-suffix="%">0%</div>
+      <div class="stat-label">следа смартфона создаётся до первого включения<span class="stat-src">производство + доставка</span></div>
+    </div>
+    <div>
+      <div class="stat-num" data-target="2" data-suffix="×">0</div>
+      <div class="stat-label">прогноз роста энергопотребления ЦОД к 2026 году<span class="stat-src">за счёт ИИ-нагрузок</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= CALCULATOR ================= -->
+<section id="calc">
+  <div class="reveal">
+    <div class="sec-tag">Интерактив</div>
+    <h2>Калькулятор цифрового следа</h2>
+    <p class="sec-desc">
+      Прикиньте годовой углеродный след от своих повседневных цифровых привычек.
+      Оценка приблизительная и основана на усреднённых коэффициентах.
+    </p>
+  </div>
+
+  <div class="calc-wrap reveal">
+    <div class="calc-panel">
+      <div class="field">
+        <div class="field-head">
+          <label for="stream">Стриминг видео, часов в неделю</label>
+          <span class="val" id="stream-v">10 ч</span>
+        </div>
+        <input type="range" id="stream" min="0" max="60" value="10" step="1">
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="calls">Видеозвонки, часов в неделю</label>
+          <span class="val" id="calls-v">5 ч</span>
+        </div>
+        <input type="range" id="calls" min="0" max="40" value="5" step="1">
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="mail">Писем отправлено, в день</label>
+          <span class="val" id="mail-v">30</span>
+        </div>
+        <input type="range" id="mail" min="0" max="300" value="30" step="5">
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="storage">Данные в облаке, ГБ</label>
+          <span class="val" id="storage-v">100 ГБ</span>
+        </div>
+        <input type="range" id="storage" min="0" max="2000" value="100" step="25">
+      </div>
+
+      <div class="field">
+        <div class="field-head">
+          <label for="devices">Личных устройств в использовании</label>
+          <span class="val" id="devices-v">3 шт</span>
+        </div>
+        <input type="range" id="devices" min="1" max="10" value="3" step="1">
+      </div>
+
+      <div class="field" style="margin-bottom:0">
+        <div class="field-head">
+          <label for="ai">Запросов к ИИ-ассистентам, в день</label>
+          <span class="val" id="ai-v">5</span>
+        </div>
+        <input type="range" id="ai" min="0" max="200" value="5" step="1">
+      </div>
+    </div>
+
+    <div class="result-panel">
+      <div class="result-label">Ваш годовой след</div>
+      <div class="result-main"><span id="total">0</span> <small>кг CO₂e</small></div>
+      <div class="result-sub">Это примерно как проехать <span id="km">0</span> км на бензиновом автомобиле.</div>
+
+      <div class="equiv">
+        <div class="equiv-row"><span>🌳 Деревьев для компенсации</span><span id="trees">0</span></div>
+        <div class="equiv-row"><span>📧 Эквивалент писем</span><span id="mails">0</span></div>
+        <div class="equiv-row"><span>📱 Зарядок смартфона</span><span id="charges">0</span></div>
+      </div>
+
+      <div class="calc-note">
+        Коэффициенты: стриминг ≈ 36 г/ч, видеозвонок ≈ 150 г/ч, письмо ≈ 4 г,
+        облако ≈ 0,2 кг/ГБ/год, устройство ≈ 23 кг/год (амортизация производства),
+        ИИ-запрос ≈ 3 г. Это ориентировочные значения для демонстрации.
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================= PRACTICES ================= -->
+<section id="practices">
+  <div class="reveal">
+    <div class="sec-tag">Решения</div>
+    <h2>Как снизить след</h2>
+    <p class="sec-desc">Разные рычаги — для инженеров, бизнеса и обычных пользователей.</p>
+  </div>
+
+  <div class="practice-grid reveal">
+    <div class="practice">
+      <span class="ico">🧮</span>
+      <h4>Эффективность кода</h4>
+      <p>Оптимизированные алгоритмы, кэширование, ленивая загрузка и пагинация сокращают нагрузку на серверы напрямую.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">🌍</span>
+      <h4>Регион размещения</h4>
+      <p>Выбор дата-центра с низкоуглеродной энергосетью может снизить выбросы в разы без изменения архитектуры.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">📦</span>
+      <h4>Right-sizing</h4>
+      <p>Отказ от простаивающих ВМ, автоскейлинг и serverless-модели устраняют «холостое» энергопотребление.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">🗜️</span>
+      <h4>Экономия данных</h4>
+      <p>Сжатие трафика, современные форматы (WebP, AV1), CDN-доставка и удаление «мёртвых» данных из облака.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">♻️</span>
+      <h4>Продление жизни железа</h4>
+      <p>Ремонт вместо замены, refurbished-оборудование и грамотная утилизация снижают Scope 3.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">📊</span>
+      <h4>Углеродная осведомлённость</h4>
+      <p>Встраивание метрик CO₂ в дашборды: то, что не измеряется, не оптимизируется.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">🔌</span>
+      <h4>ВИЭ и PPA</h4>
+      <p>Контракты на возобновляемую энергию, собственные солнечные установки, «зелёные» тарифы.</p>
+    </div>
+    <div class="practice">
+      <span class="ico">🧊</span>
+      <h4>Свободное охлаждение</h4>
+      <p>Free cooling, иммерсионное охлаждение и повышение рабочих температур в зале снижают PUE.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================= METRICS ================= -->
+<section id="metrics">
+  <div class="reveal">
+    <div class="sec-tag">Измерение</div>
+    <h2>Метрики и стандарты</h2>
+    <p class="sec-desc">Как измерить углеродный след и сравнить его с другими.</p>
+  </div>
+
+  <div class="table-wrap reveal">
+    <table>
+      <thead>
+        <tr><th>Метрика</th><th>Что показывает</th><th>Ориентир</th></tr>
+      </thead>
+      <tbody>
+        <tr><td><strong>PUE</strong></td><td>Отношение общей энергии ЦОД к энергии ИТ-оборудования</td><td>1,1–1,4 — хорошо</td></tr>
+        <tr><td><strong>CUE</strong></td><td>Углеродная эффективность: кг CO₂ на кВт·ч полезной работы</td><td>Чем ниже, тем лучше</td></tr>
+        <tr><td><strong>SCI</strong></td><td>Software Carbon Intensity — углерод на единицу функциональности</td><td>gCO₂e / единица</td></tr>
+        <tr><td><strong>WUE</strong></td><td>Расход воды на кВт·ч охлаждения</td><td>&lt; 1,5 л/кВт·ч</td></tr>
+        <tr><td><strong>GHG Protocol</strong></td><td>Методология учёта выбросов по Scope 1–3</td><td>Базовый стандарт</td></tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- ================= MYTHS ================= -->
+<section id="myths">
+  <div class="reveal">
+    <div class="sec-tag">Разбор заблуждений</div>
+    <h2>Популярные мифы</h2>
+    <p class="sec-desc">Цифровой мир кажется «невидимым» — и это порождает иллюзии.</p>
+  </div>
+
+  <div class="reveal">
+    <details>
+      <summary>«Облако — это экологично, потому что нет физических серверов»</summary>
+      <div class="body">Облако — это как раз физические серверы, просто чужие. Консолидация действительно повышает эффективность (крупные ЦОД эффективнее мелких), но общий объём потребления растёт. «Зелёное» облако — это вопрос источника энергии и политики провайдера, а не самого факта виртуальности.</div>
+    </details>
+    <details>
+      <summary>«Один поисковый запрос не имеет значения»</summary>
+      <div class="body">Сам по себе — почти нет: порядка 0,2–0,5 г CO₂. Но миллиарды запросов, умноженные на тяжёлые страницы, рекламу и трекеры, создают измеримый след. Оптимизация веб-страниц — один из самых масштабируемых рычагов в отрасли.</div>
+    </details>
+    <details>
+      <summary>«Главное — экономить электричество в дата-центре»</summary>
+      <div class="body">Нет. Для пользовательских устройств (смартфоны, ноутбуки) 70–80% следа приходится на производство, а не на эксплуатацию. Поэтому «купить новое, потому что оно энергоэффективнее» часто увеличивает след, а не уменьшает.</div>
+    </details>
+    <details>
+      <summary>«ИИ всегда ухудшает экологию»</summary>
+      <div class="body">Двояко. Обучение крупных моделей — ресурсоёмко, инференс в масштабе — тем более. Но ИИ также оптимизирует энергосети, логистику и охлаждение ЦОД. Ключевой вопрос — соотношение пользы и затрат, а не сам факт технологии.</div>
+    </details>
+    <details>
+      <summary>«Удаление файлов из корзины освобождает энергию»</summary>
+      <div class="body">Лишь частично: пока данные хранятся на диске, он всё равно потребляет энергию, но основной вклад — производство носителя. Тем не менее регулярная «цифровая уборка» снижает нагрузку на резервное копирование и репликацию — а это уже реальные киловатты.</div>
+    </details>
+  </div>
+</section>
+
+<!-- ================= CTA ================= -->
+<section>
+  <div class="cta reveal">
+    <h2>Начните с измерения</h2>
+    <p>
+      Углеродный след цифровых систем измерим, а значит — управляем.
+      Первый шаг: понять, где именно в вашей архитектуре и привычках
+      сосредоточены выбросы.
+    </p>
+    <a href="#calc" class="btn btn-primary">Пересчитать свой след ↑</a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-logo">◈ Green Digital</div>
+  <p>Образовательный проект об устойчивости информационных систем.</p>
+  <p style="margin-top:8px">Данные носят оценочный характер и основаны на открытых публикациях IEA, GHG Protocol и отраслевых исследований.</p>
+</footer>
+
+<script>
+/* ---------- NAV SCROLL ---------- */
+const nav = document.getElementById('nav');
+window.addEventListener('scroll', () => {
+  nav.classList.toggle('scrolled', window.scrollY > 30);
+});
+
+/* ---------- REVEAL ON SCROLL ---------- */
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.classList.add('in');
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+document.querySelectorAll('.reveal').forEach(el => io.observe(el));
+
+/* ---------- CARD GLOW ---------- */
+document.querySelectorAll('.card').forEach(card => {
+  card.addEventListener('mousemove', e => {
+    const r = card.getBoundingClientRect();
+    card.style.setProperty('--mx', (e.clientX - r.left) + 'px');
+    card.style.setProperty('--my', (e.clientY - r.top) + 'px');
+  });
+});
+
+/* ---------- COUNTERS ---------- */
+const counters = document.querySelectorAll('.stat-num');
+const cio = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (!e.isIntersecting) return;
+    const el = e.target;
+    const target = parseFloat(el.dataset.target);
+    const suffix = el.dataset.suffix || '';
+    const dur = 1600;
+    const start = performance.now();
+    const isFloat = target % 1 !== 0;
+    const step = (now) => {
+      const p = Math.min((now - start) / dur, 1);
+      const eased = 1 - Math.pow(1 - p, 3);
+      const val = target * eased;
+      el.textContent = (isFloat ? val.toFixed(1) : Math.round(val)) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+      else el.textContent = (isFloat ? target.toFixed(1) : target) + suffix;
+    };
+    requestAnimationFrame(step);
+    cio.unobserve(el);
+  });
+}, { threshold: 0.6 });
+counters.forEach(c => cio.observe(c));
+
+/* ---------- CALCULATOR ---------- */
+const ids = ['stream','calls','mail','storage','devices','ai'];
+const inputs = {};
+ids.forEach(id => inputs[id] = document.getElementById(id));
+
+const COEF = {
+  stream: 0.036,   // кг CO2 на час стриминга
+  calls: 0.150,    // кг CO2 на час видеозвонка
+  mail: 0.004,     // кг CO2 на письмо
+  storage: 0.2,    // кг CO2 на ГБ в год
+  devices: 23.0,   // кг CO2 на устройство в год (амортизация)
+  ai: 0.003        // кг CO2 на запрос
+};
+
+const fmt = n => n.toLocaleString('ru-RU');
+
+function update() {
+  const s = +inputs.stream.value;
+  const c = +inputs.calls.value;
+  const m = +inputs.mail.value;
+  const st = +inputs.storage.value;
+  const d = +inputs.devices.value;
+  const a = +inputs.ai.value;
+
+  // подписи
+  document.getElementById('stream-v').textContent = s + ' ч';
+  document.getElementById('calls-v').textContent = c + ' ч';
+  document.getElementById('mail-v').textContent = fmt(m);
+  document.getElementById('storage-v').textContent = fmt(st) + ' ГБ';
+  document.getElementById('devices-v').textContent = d + ' шт';
+  document.getElementById('ai-v').textContent = fmt(a);
+
+  // годовые выбросы, кг
+  const total =
+      s * 52 * COEF.stream +
+      c * 52 * COEF.calls +
+      m * 365 * COEF.mail +
+      st * COEF.storage +
+      d * COEF.devices +
+      a * 365 * COEF.ai;
+
+  document.getElementById('total').textContent = fmt(Math.round(total));
+  document.getElementById('km').textContent = fmt(Math.round(total / 0.19));
+  document.getElementById('trees').textContent = Math.ceil(total / 21) + ' шт';
+  document.getElementById('mails').textContent = fmt(Math.round(total / COEF.mail));
+  document.getElementById('charges').textContent = fmt(Math.round(total / 0.008));
+}
+
+ids.forEach(id => inputs[id].addEventListener('input', update));
+update();
+</script>
+</body>
+</html>
